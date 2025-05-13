@@ -21,27 +21,19 @@ pip install -r requirements.txt
 ## Dataset
 While under review, we will not be releasing our training dataset on HuggingFace. However our training data and all out evalaution datasets are present in the `data`.
 
+## Training
+
+
 ## Evaluation
 
-To start the evaluation of a persona or multiple personas, begin by inputting your OpenAI, Anthropic, and TogetherAI API keys [here](https://github.com/vsamuel2003/PersonaGym/blob/master/code/api_keys.py)
-```bash
-OPENAI_API_KEY = "Insert OpenAI key here"
-CLAUDE_API_KEY = "Insert Claude key here"
-LLAMA_API_KEY = "Insert Llama key here"
-```
+To start the evaluation of a trained CIE model checkpoint move to the `code` directory and  run the `epoch_evals.py` file. The --checkpoint flag takes in the path to the saved model directory created by HuggingFace Trainer, the --model_name flag takes in the name of the model (ie. llama3, gemma, qwen) to match to the exact instruct template of the trained model, --model_name flag indicates the name to be used when saving results from the given model to be evaluated, and the --benchmarks takes in a list of benchmark names (from validation, validation_ranges, and alpaca-li) to be evaluated on.
 
-Then move to the code directory and  run the `run.py` file. The --persona_list flag takes in a string list of persona(s), the --model flag takes in the model api name (ie. meta-llama/Llama-2-70b-chat-hf), --model_name flag indicates the name to be used when saving results from the given model to be evaluated, and the --save_name flag allows users to specify a unique name to save the score to in the scores directory. Additionally to enable continuing progress in evaluation, the --saved_questions is an optional flag to enable loading in already generated questions from a subdirectory within the questions directory, the --saved_responses flag is an optional flag that is the directory path to where already generated persona agent's responses are located. Finally the --benchmark enables running on our benchmark. Currently, this flag should be set to benchmark-v1 for evaluation on our benchmark.
-
-An example of running the `run.py` file is included below
+An example of running the `epoch_evals.py` file is included below
 
 ```bash
-python run.py --persona_list '["an Asian software engineer", "a high school physics teacher"]' --model meta-llama/Llama-2-70b-chat-hf --model_name llama_2_70b
+python epoch_evals.py --checkpoint /data/group_data/word_count/full/llama3/5e-6_test --model_name llama3 --benchmarks validation
 ```
-An example of evaluating on our benchmark is included below
 
-```bash
-python run.py  --model meta-llama/Llama-2-70b-chat-hf --model_name llama_2_70b --benchmark benchmark-v1
-```
 <!--
 ## Bugs or Questions
 
