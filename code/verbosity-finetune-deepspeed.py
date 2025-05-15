@@ -125,10 +125,8 @@ def main():
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
 
-    if args.model_type == "mistral":
-        tokenizer.add_eos_token = True
-        response_template = "[/INST]"
-    elif args.model_type == "llama3":
+
+    if args.model_type == "llama3":
         response_template = "<|start_header_id|>assistant<|end_header_id|>\n"
     elif args.model_type == "qwen":
         response_template = "<|im_end|>\n<|im_start|>assistant\n"
@@ -149,12 +147,8 @@ def main():
         
     def format_instruction(model_input):
         """Format instruction based on model type."""
-        if args.model_type == 'llama2': 
-            return [f"""<s> [INST] <<SYS>> {SYSTEM_INSTRUCTION} <</SYS>>{model_input.lstrip().rstrip()} [/INST]"""]
-        elif args.model_type == "llama3":
+        if args.model_type == "llama3":
             return f'''<|start_header_id|>system<|end_header_id|>\n\n{SYSTEM_INSTRUCTION}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{model_input['inputs'].lstrip().rstrip()}<embedding><|eot_id|><|start_header_id|>assistant<|end_header_id|>\n{model_input['labels'].lstrip().rstrip()}<|eot_id|>'''
-        elif args.model_type == "mistral":
-            return f'''<s>[INST] {SYSTEM_INSTRUCTION} {model_input['inputs'].lstrip().rstrip()}<embedding> [/INST]{model_input['labels'].lstrip().rstrip()}</s>'''
         elif args.model_type == "qwen":
             return f"<|im_start|>system\n{SYSTEM_INSTRUCTION}<|im_end|>\n<|im_start|>user\n{model_input['inputs'].lstrip().rstrip()}<embedding><|im_end|>\n<|im_start|>assistant\n{model_input['labels'].lstrip().rstrip()}<|im_end|>"
         elif args.model_type == "gemma":
