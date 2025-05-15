@@ -19,11 +19,22 @@ pip install -r requirements.txt
 ```
 
 ## Dataset
-While under review, we will not be releasing our training dataset on HuggingFace. However our training data and all out evalaution datasets are present in the `data`.
+While under review, we will not release our training dataset on HuggingFace. However, our training data and all evaluation datasets are present in the `data`.
 
 ## Training
+We currently provide the exact scripts to train the LLaMA-3-8B-IT, gemma-7B-it, and Qwen1.5-7B-Chat models we experiment with and reproduce our results in `code/scripts`. In order to train on a HuggingFace Instruction tuned model follow the steps below.
 
+Begin by adding in the "response template" to line 129 of `verbosity-finetune.py` for the model being added in. The response template is a string of tokens that are present in the model's instruct template that is present right before the "assistant" repsonse. This template is what is used by the custom model to create a label mask during training. 
 
+```bash
+if args.model_type == "llama3":
+    response_template = "<|start_header_id|>assistant<|end_header_id|>\n"
+elif args.model_type == "qwen":
+    response_template = "<|im_end|>\n<|im_start|>assistant\n"
+elif args.model_type == "gemma":
+    tokenizer.add_eos_token = True
+    response_template = "\n<start_of_turn>model\n"
+```
 ## Evaluation
 
 To start the evaluation of a trained CIE model checkpoint move to the `code` directory and  run the `epoch_evals.py` file. The --checkpoint flag takes in the path to the saved model directory created by HuggingFace Trainer, the --model_name flag takes in the name of the model (ie. llama3, gemma, qwen) to match to the exact instruct template of the trained model, --model_name flag indicates the name to be used when saving results from the given model to be evaluated, and the --benchmarks takes in a list of benchmark names (from validation, validation_ranges, and alpaca-li) to be evaluated on.
